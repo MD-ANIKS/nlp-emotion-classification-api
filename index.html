@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Emotiq AI — NLP Emotion Intelligence</title>
+<meta name="description" content="Analyze the emotional signal behind any text using a trained NLP classification model." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="signal-field" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <circle cx="11" cy="11" r="9.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M6 11c1.2-3 2.2-4.5 3-4.5s1.6 4.9 2.4 4.9 1.4-2.9 2.1-2.9 1 2.5 2.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <div class="brand-text">
+        <span class="brand-name">Emotiq<span class="brand-name-accent">AI</span></span>
+        <span class="brand-badge">NLP Intelligence</span>
+      </div>
+    </div>
+
+    <div class="status-pill" id="modelStatus" role="status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="status-label">Model Online</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">AI-POWERED NLP</span>
+      <h1 class="hero-title">Understand the Emotion<br>Behind the Words.</h1>
+      <p class="hero-sub">Analyze text with a machine learning model trained to identify emotional patterns across six distinct categories.</p>
+
+      <div class="spectrum-bar" aria-hidden="true">
+        <span class="spectrum-seg" data-emotion="sadness"></span>
+        <span class="spectrum-seg" data-emotion="anger"></span>
+        <span class="spectrum-seg" data-emotion="love"></span>
+        <span class="spectrum-seg" data-emotion="surprise"></span>
+        <span class="spectrum-seg" data-emotion="fear"></span>
+        <span class="spectrum-seg" data-emotion="joy"></span>
+      </div>
+      <div class="spectrum-legend">
+        <span>Sadness</span><span>Anger</span><span>Love</span><span>Surprise</span><span>Fear</span><span>Joy</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="workspace" aria-label="Emotion analysis workspace">
+    <div class="workspace-inner">
+
+      <!-- LEFT: INPUT CARD -->
+      <div class="panel input-panel">
+        <div class="panel-head">
+          <h2>Analyze Text</h2>
+          <p>Enter a sentence and let the model identify its emotional signal.</p>
+        </div>
+
+        <form id="analyzeForm" novalidate>
+          <div class="field">
+            <label for="textInput" class="visually-hidden">Text to analyze</label>
+            <textarea
+              id="textInput"
+              name="text"
+              rows="6"
+              maxlength="600"
+              placeholder="Type something like: I can't believe how amazing today has been..."
+              aria-describedby="charCount inputError"
+            ></textarea>
+            <div class="field-meta">
+              <span id="inputError" class="input-error" role="alert"></span>
+              <span id="charCount" class="char-count">0 / 600</span>
+            </div>
+          </div>
+
+          <div class="examples" role="group" aria-label="Example phrases">
+            <span class="examples-label">Try an example</span>
+            <div class="chip-row">
+              <button type="button" class="chip" data-text="Today was wonderful">Today was wonderful</button>
+              <button type="button" class="chip" data-text="I feel nervous about tomorrow">I feel nervous about tomorrow</button>
+              <button type="button" class="chip" data-text="I really miss you">I really miss you</button>
+              <button type="button" class="chip" data-text="I am furious right now">I am furious right now</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="analyzeBtn">
+            <span class="btn-label">Analyze Emotion</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- RIGHT: RESULT CARD -->
+      <div class="panel result-panel">
+
+        <!-- STATE: IDLE -->
+        <div class="state state-idle" id="stateIdle" data-state="idle">
+          <div class="idle-glyph" aria-hidden="true">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="17" stroke="currentColor" stroke-width="1"/>
+              <path d="M12 20c2-6 4-9 6-9s3 10 5 10 2.5-6 4-6 2 5 5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Awaiting Analysis</h3>
+          <p>Enter text to discover its emotional signal.</p>
+        </div>
+
+        <!-- STATE: LOADING -->
+        <div class="state state-loading" id="stateLoading" data-state="loading" hidden>
+          <div class="loading-rings" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <h3>Analyzing…</h3>
+          <p>Reading the emotional structure of your text.</p>
+        </div>
+
+        <!-- STATE: SUCCESS -->
+        <div class="state state-success" id="stateSuccess" data-state="success" hidden>
+          <div class="result-head">
+            <span class="result-label">Detected Emotion</span>
+            <div class="result-emotion" id="resultEmotion">
+              <span class="emotion-dot" id="emotionDot" aria-hidden="true"></span>
+              <span class="emotion-name" id="emotionName">JOY</span>
+            </div>
+          </div>
+
+          <div class="confidence-block">
+            <div class="confidence-row">
+              <span>Confidence</span>
+              <span class="confidence-value" id="confidenceValue">0%</span>
+            </div>
+            <div class="confidence-track" role="progressbar" aria-label="Model confidence" aria-valuemin="0" aria-valuemax="100" id="confidenceBarWrap">
+              <div class="confidence-fill" id="confidenceFill"></div>
+            </div>
+          </div>
+
+          <div class="distribution-block">
+            <span class="distribution-label">Emotion Distribution</span>
+            <ul class="distribution-list" id="distributionList"><!-- injected --></ul>
+          </div>
+
+          <p class="analyzed-text" id="analyzedText"></p>
+        </div>
+
+        <!-- STATE: ERROR -->
+        <div class="state state-error" id="stateError" data-state="error" hidden>
+          <div class="error-glyph" aria-hidden="true">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <circle cx="18" cy="18" r="15" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M18 11v9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="18" cy="24" r="1.2" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3>Analysis Failed</h3>
+          <p id="errorMessage">Something went wrong while analyzing your text.</p>
+          <button type="button" class="btn-secondary" id="retryBtn">Try Again</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <span>Emotiq AI · Logistic Regression NLP Pipeline</span>
+    <span class="footer-endpoint">POST /predict</span>
+  </footer>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
