@@ -5,7 +5,7 @@
 (() => {
   "use strict";
 
-  const API_URL = "http://127.0.0.1:8000/predict";
+  const API_URL = "https://emotiq-api.onrender.com/predict";
   const MAX_CHARS = 600;
 
   const EMOTION_META = {
