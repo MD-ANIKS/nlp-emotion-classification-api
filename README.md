@@ -4,6 +4,8 @@ A Machine Learning project that uses **Natural Language Processing (NLP)** and *
 
 The trained ML pipeline is integrated with **FastAPI** and a modern frontend built with **HTML, CSS, and JavaScript**.
 
+**Live demo:** https://emotiq-ai.onrender.com
+
 ---
 
 ##  Features
